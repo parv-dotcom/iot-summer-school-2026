@@ -2,7 +2,7 @@ name: Count Arduino Sketches
 
 on:
   push:
-
+  
 jobs:
   count-ino-files:
     runs-on: ubuntu-latest
