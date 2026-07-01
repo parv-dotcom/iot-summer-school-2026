@@ -1,3 +1,13 @@
+/*
+  Author      : Parv Agrawal
+  Date        : 01 July 2026
+  Project     : LED Blink Speed Control using Potentiometer
+  Description : Reads the potentiometer value from analog pin A0
+                and controls the LED blink speed. As the
+                potentiometer is rotated, the LED blinks
+                faster or slower accordingly.
+*/
+
 int ledPin = 13;
 int potPin = A0;
 
