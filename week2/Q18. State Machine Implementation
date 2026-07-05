@@ -1,0 +1,183 @@
+/*
+====================================================
+        VENDING MACHINE STATE MACHINE
+====================================================
+
+States:
+1. IDLE
+2. COIN_INSERTED
+3. ITEM_SELECTED
+4. DISPENSING
+
+State Transition Diagram
+
+                 Insert Coin
+        +------------------------+
+        |                        |
+        V                        |
+                             Cancel
+     | IDLE  |
+          |                        
+          | Insert Coin            
+          V                        
+ | COIN_INSERTED    |
+          |
+          | Select Item
+          V
+  ITEM_SELECTED    
+          |
+          | Automatic
+          V
+     DISPENSING       
+
+          |
+          | Item Dispensed
+          V
+       
+      	IDLE  
+
+Cancel button works from:
+COIN_INSERTED -> IDLE
+ITEM_SELECTED -> IDLE
+
+====================================================
+*/
+
+const int coinBtn = 2;
+const int selectBtn = 3;
+const int cancelBtn = 4;
+
+const int ledIdle = 8;
+const int ledCoin = 9;
+const int ledItem = 10;
+
+// State names
+enum State
+{
+  IDLE,
+  COIN_INSERTED,
+  ITEM_SELECTED,
+  DISPENSING
+};
+
+State currentState = IDLE;
+
+bool lastCoin = HIGH;
+bool lastSelect = HIGH;
+bool lastCancel = HIGH;
+
+void setup()
+{
+  pinMode(coinBtn, INPUT_PULLUP);
+  pinMode(selectBtn, INPUT_PULLUP);
+  pinMode(cancelBtn, INPUT_PULLUP);
+
+  pinMode(ledIdle, OUTPUT);
+  pinMode(ledCoin, OUTPUT);
+  pinMode(ledItem, OUTPUT);
+
+  Serial.begin(9600);
+
+  Serial.println("Vending Machine Started");
+  updateLEDs();
+}
+
+void loop()
+{
+  bool coin = digitalRead(coinBtn);
+  bool select = digitalRead(selectBtn);
+  bool cancel = digitalRead(cancelBtn);
+
+  switch (currentState)
+  {
+
+    case IDLE:
+
+      if (lastCoin == HIGH && coin == LOW)
+      {
+        Serial.println("IDLE --> COIN_INSERTED");
+        currentState = COIN_INSERTED;
+        updateLEDs();
+      }
+      break;
+
+    case COIN_INSERTED:
+
+      if (lastSelect == HIGH && select == LOW)
+      {
+        Serial.println("COIN_INSERTED --> ITEM_SELECTED");
+        currentState = ITEM_SELECTED;
+        updateLEDs();
+      }
+
+      else if (lastCancel == HIGH && cancel == LOW)
+      {
+        Serial.println("COIN_INSERTED --> IDLE (Cancelled)");
+        currentState = IDLE;
+        updateLEDs();
+      }
+
+      break;
+
+    case ITEM_SELECTED:
+
+      Serial.println("ITEM_SELECTED --> DISPENSING");
+      currentState = DISPENSING;
+      dispensing();
+      break;
+
+    case DISPENSING:
+
+      Serial.println("DISPENSING --> IDLE");
+      currentState = IDLE;
+      updateLEDs();
+      break;
+  }
+
+  lastCoin = coin;
+  lastSelect = select;
+  lastCancel = cancel;
+
+  delay(100);
+}
+
+void updateLEDs()
+{
+  digitalWrite(ledIdle, LOW);
+  digitalWrite(ledCoin, LOW);
+  digitalWrite(ledItem, LOW);
+
+  switch (currentState)
+  {
+    case IDLE:
+      digitalWrite(ledIdle, HIGH);
+      break;
+
+    case COIN_INSERTED:
+      digitalWrite(ledCoin, HIGH);
+      break;
+
+    case ITEM_SELECTED:
+      digitalWrite(ledItem, HIGH);
+      break;
+
+    case DISPENSING:
+      break;
+  }
+}
+
+
+void dispensing()
+{
+  Serial.println("Dispensing Item...");
+
+  for (int i = 0; i < 6; i++)
+  {
+    digitalWrite(ledItem, HIGH);
+    delay(250);
+    digitalWrite(ledItem, LOW);
+    delay(250);
+  }
+
+  Serial.println("Item Dispensed");
+}
