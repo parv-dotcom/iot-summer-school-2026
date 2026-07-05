@@ -1,0 +1,38 @@
+Digital Input Pin:- 
+
+A digital input pin on the Arduino UNO is used to read digital signals from external devices such as push buttons, switches, and digital sensors. It can detect only two states: HIGH (5V) and LOW (0V). To use a pin as a digital input, it is configured using pinMode(pin, INPUT) or pinMode(pin, INPUT_PULLUP) in the setup() function. The state of the pin is read using the digitalRead() function.
+
+EXAMPLE:-
+A push button is connected to a digital input pin of the Arduino. When the button is pressed, the Arduino detects the HIGH or LOW signal using digitalRead() and turns an LED or a smart light ON or OFF.
+
+Digital Output Pin:-
+
+A digital output pin on the Arduino UNO is used to send digital signals to external devices such as LEDs, buzzers, relays, and motors. It can produce only two output states: HIGH (5V) and LOW (0V). To use a pin as a digital output, it is configured using pinMode(pin, OUTPUT) in the setup() function. The output state is controlled using the digitalWrite() function.
+
+Example:-
+A digital output pin is connected to an LED. The Arduino sends a HIGH signal to turn the LED ON and a LOW signal to turn it OFF using the digitalWrite() function
+
+Analog Input Pin:-
+
+The Arduino UNO has 6 analog input pins (A0–A5) that are used to read analog voltage signals from sensors such as temperature sensors, LDRs, and potentiometers. These pins measure voltages between 0V and 5V and convert them into digital values ranging from 0 to 1023 using the built-in 10-bit Analog-to-Digital Converter (ADC). Analog values are read using the analogRead() function.
+
+Example:- An analog input pin is connected to a temperature sensor (such as LM35). The Arduino reads the sensor's analog voltage using the analogRead() function and measures the temperature. In an IoT system, this temperature data is sent to a mobile app or cloud platform for real-time monitoring and can be used to automatically turn on a fan or send an alert if the temperature becomes too high.
+
+PWM Output Pin:-
+
+PWM (Pulse Width Modulation) output pins on the Arduino UNO are digital pins 3, 5, 6, 9, 10, and 11 that can simulate analog output by producing pulses with varying duty cycles. PWM is used to control the brightness of LEDs, speed of DC motors, and other devices that require variable power. The PWM signal is generated using the analogWrite() function, which accepts values from 0 to 255, where 0 means always OFF and 255 means always ON.
+
+Example:- A PWM output pin is connected to a DC fan through a motor driver. The Arduino uses the analogWrite() function to vary the PWM signal, which controls the speed of the fan. In an IoT system, the fan speed can be adjusted automatically based on temperature sensor readings or remotely through a mobile app.
+
+I2C Pins
+
+I2C (Inter-Integrated Circuit) is a communication protocol used to connect the Arduino UNO with multiple devices such as sensors, LCD displays, and RTC modules using only two wires: SDA (A4) for data and SCL (A5) for the clock. It simplifies wiring and allows multiple devices to communicate on the same bus.
+
+Example:- Smart Weather Monitoring System:
+An Arduino UNO uses the I2C pins (SDA and SCL) to communicate with a BME280 temperature, humidity, and pressure sensor. The sensor data is sent to a cloud platform or mobile app for real-time weather monitoring.
+
+SPI Pins
+
+SPI (Serial Peripheral Interface) is a high-speed communication protocol used to connect the Arduino UNO with devices such as SD card modules, displays, and sensors. It uses four pins: MOSI (D11), MISO (D12), SCK (D13), and SS (D10) for fast and reliable data transfer between the Arduino and peripheral devices.
+
+Examples:- An Arduino UNO uses the SPI pins (MOSI, MISO, SCK, and SS) to communicate with an SD card module. Sensor data is stored on the SD card and can later be uploaded to the cloud for IoT data analysis and monitoring.
