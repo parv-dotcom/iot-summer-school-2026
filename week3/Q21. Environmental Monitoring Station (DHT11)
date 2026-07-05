@@ -1,0 +1,76 @@
+https://wokwi.com/projects/468688219082526721
+
+#include <DHT.h>
+
+// ----------------------
+// Pin Definitions
+// ----------------------
+#define DHTPIN 2
+#define DHTTYPE DHT22
+
+#define RED_LED 8
+#define GREEN_LED 9
+
+DHT dht(DHTPIN, DHTTYPE);
+
+unsigned long previousMillis = 0;
+const unsigned long interval = 2000; // Read every 2 seconds
+
+void setup()
+{
+  Serial.begin(9600);
+
+  dht.begin();
+
+  pinMode(RED_LED, OUTPUT);
+  pinMode(GREEN_LED, OUTPUT);
+
+  // CSV Header
+  Serial.println("timestamp,temp_C,temp_F,humidity");
+}
+
+void loop()
+{
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - previousMillis >= interval)
+  {
+    previousMillis = currentMillis;
+
+    // Read Sensor
+    float humidity = dht.readHumidity();
+    float tempC = dht.readTemperature();
+    float tempF = dht.readTemperature(true);
+
+    // Check if reading failed
+    if (isnan(humidity) || isnan(tempC) || isnan(tempF))
+    {
+      Serial.println("Sensor Error");
+      return;
+    }
+
+    // Print CSV Format
+    Serial.print(currentMillis);
+    Serial.print(",");
+
+    Serial.print(tempC, 1);
+    Serial.print(",");
+
+    Serial.print(tempF, 1);
+    Serial.print(",");
+
+    Serial.println(humidity, 1);
+
+    // LED Status
+    if (tempC > 35.0 || humidity > 80.0)
+    {
+      digitalWrite(RED_LED, HIGH);
+      digitalWrite(GREEN_LED, LOW);
+    }
+    else
+    {
+      digitalWrite(RED_LED, LOW);
+      digitalWrite(GREEN_LED, HIGH);
+    }
+  }
+}
