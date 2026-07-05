@@ -1,0 +1,83 @@
+https://wokwi.com/projects/468696913688979457
+
+#include <DHT.h>
+
+#define DHTPIN 2
+#define DHTTYPE DHT11
+
+DHT dht(DHTPIN, DHTTYPE);
+
+const int relayPin = 8;
+const int buttonPin = 3;
+
+bool relayState = false;
+bool manualMode = false;
+
+int lastButtonState = HIGH;
+
+void setup() {
+  Serial.begin(9600);
+
+  dht.begin();
+
+  pinMode(relayPin, OUTPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
+
+  digitalWrite(relayPin, LOW);
+
+  Serial.println("System Started");
+}
+
+void loop() {
+
+  float temp = dht.readTemperature();
+
+  if (isnan(temp))
+    return;
+
+  // Manual Override Button
+  int buttonState = digitalRead(buttonPin);
+
+  if (buttonState == LOW && lastButtonState == HIGH) {
+    manualMode = !manualMode;
+
+    if (manualMode)
+      relayState = !relayState;
+
+    digitalWrite(relayPin, relayState);
+
+    Serial.print("Manual Override -> Relay ");
+    Serial.print(relayState ? "ON" : "OFF");
+    Serial.print(" | Temp: ");
+    Serial.print(temp);
+    Serial.println(" C");
+
+    delay(200);
+  }
+
+  lastButtonState = buttonState;
+
+  // Automatic Control (only if manual mode is OFF)
+  if (!manualMode) {
+
+    if (temp > 32 && !relayState) {
+      relayState = true;
+      digitalWrite(relayPin, HIGH);
+
+      Serial.print("Relay ON | Temperature: ");
+      Serial.print(temp);
+      Serial.println(" C");
+    }
+
+    else if (temp < 28 && relayState) {
+      relayState = false;
+      digitalWrite(relayPin, LOW);
+
+      Serial.print("Relay OFF | Temperature: ");
+      Serial.print(temp);
+      Serial.println(" C");
+    }
+  }
+
+  delay(500);
+}
