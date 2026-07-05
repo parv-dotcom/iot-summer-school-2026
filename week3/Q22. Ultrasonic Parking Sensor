@@ -1,0 +1,116 @@
+https://wokwi.com/projects/468688874186722305
+
+// HC-SR04 Pins
+const int trigPin = 9;
+const int echoPin = 10;
+
+// LEDs
+const int greenLED = 4;
+const int yellowLED = 5;
+const int redLED = 6;
+
+// Buzzer
+const int buzzer = 8;
+
+long duration;
+float distance;
+
+void setup()
+{
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+
+  pinMode(greenLED, OUTPUT);
+  pinMode(yellowLED, OUTPUT);
+  pinMode(redLED, OUTPUT);
+
+  pinMode(buzzer, OUTPUT);
+
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  // Send Trigger Pulse
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+
+  digitalWrite(trigPin, LOW);
+
+  // Read Echo Time
+  duration = pulseIn(echoPin, HIGH);
+
+  // Calculate Distance
+  distance = (duration * 0.034) / 2;
+
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  // ----------------------------
+  // SAFE (>50 cm)
+  // ----------------------------
+  if (distance > 50)
+  {
+    digitalWrite(greenLED, HIGH);
+    digitalWrite(yellowLED, LOW);
+    digitalWrite(redLED, LOW);
+
+    digitalWrite(buzzer, LOW);
+
+    Serial.println("SAFE");
+
+    delay(500);
+  }
+
+  // ----------------------------
+  // WARNING (20 - 50 cm)
+  // ----------------------------
+  else if (distance > 20 && distance <= 50)
+  {
+    digitalWrite(greenLED, LOW);
+    digitalWrite(yellowLED, HIGH);
+    digitalWrite(redLED, LOW);
+
+    digitalWrite(buzzer, HIGH);
+    delay(250);
+    digitalWrite(buzzer, LOW);
+    delay(250);
+  }
+
+  // ----------------------------
+  // DANGER (10 - 20 cm)
+  // ----------------------------
+  else if (distance > 10 && distance <= 20)
+  {
+    digitalWrite(greenLED, LOW);
+    digitalWrite(yellowLED, LOW);
+    digitalWrite(redLED, HIGH);
+
+    digitalWrite(buzzer, HIGH);
+    delay(100);
+    digitalWrite(buzzer, LOW);
+    delay(100);
+  }
+
+  // ----------------------------
+  // CRITICAL (<10 cm)
+  // ----------------------------
+  else
+  {
+    digitalWrite(buzzer, HIGH);
+
+    digitalWrite(greenLED, HIGH);
+    digitalWrite(yellowLED, HIGH);
+    digitalWrite(redLED, HIGH);
+    delay(100);
+
+    digitalWrite(greenLED, LOW);
+    digitalWrite(yellowLED, LOW);
+    digitalWrite(redLED, LOW);
+    delay(100);
+  }
+}
