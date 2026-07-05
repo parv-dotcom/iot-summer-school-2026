@@ -1,0 +1,81 @@
+const int EN = 9;      // L293D Enable pin (Pin 1)
+const int IN1 = 8;     // L293D Pin 2
+const int IN2 = 7;     // L293D Pin 7
+
+const int potPin = A0;
+const int dirButton = 2;
+const int startButton = 3;
+
+bool direction = true;   // true = Forward
+bool running = true;
+
+int lastDir = HIGH;
+int lastStart = HIGH;
+
+void setup() {
+  Serial.begin(9600);
+
+  pinMode(EN, OUTPUT);
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+
+  pinMode(dirButton, INPUT_PULLUP);
+  pinMode(startButton, INPUT_PULLUP);
+
+  updateDirection();
+}
+
+void loop() {
+
+  // Read potentiometer
+  int potValue = analogRead(potPin);
+
+  // Convert to PWM (0-255)
+  int speed = map(potValue, 0, 1023, 0, 255);
+
+  // Direction button
+  int dirState = digitalRead(dirButton);
+  if (dirState == LOW && lastDir == HIGH) {
+    direction = !direction;
+    updateDirection();
+    delay(200);
+  }
+  lastDir = dirState;
+
+  // Start/Stop button
+  int startState = digitalRead(startButton);
+  if (startState == LOW && lastStart == HIGH) {
+    running = !running;
+    delay(200);
+  }
+  lastStart = startState;
+
+  // Run or Stop motor
+  if (running)
+    analogWrite(EN, speed);
+  else
+    analogWrite(EN, 0);
+
+  // Serial Output
+  Serial.print("Direction: ");
+  Serial.print(direction ? "Forward" : "Reverse");
+
+  Serial.print(" | Speed: ");
+  Serial.print(map(speed, 0, 255, 0, 100));
+  Serial.print("%");
+
+  Serial.print(" | State: ");
+  Serial.println(running ? "Running" : "Stopped");
+
+  delay(200);
+}
+
+void updateDirection() {
+  if (direction) {
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
+  } else {
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, HIGH);
+  }
+}
