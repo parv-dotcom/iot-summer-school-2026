@@ -1,0 +1,59 @@
+https://wokwi.com/projects/468695504824225793
+
+#include <Servo.h>
+
+Servo myServo;
+
+const int servoPin = 9;
+const int potPin = A0;
+const int buttonPin = 2;
+
+int potValue;
+int angle;
+
+void setup() {
+  Serial.begin(9600);
+
+  myServo.attach(servoPin);
+
+  pinMode(buttonPin, INPUT_PULLUP);
+}
+
+void loop() {
+
+
+  if (digitalRead(buttonPin) == LOW) {
+
+    
+    delay(20);
+    while (digitalRead(buttonPin) == LOW);
+
+ 
+    for (int i = 0; i <= 180; i++) {
+      myServo.write(i);
+      delay(10);
+    }
+
+   
+    for (int i = 180; i >= 0; i--) {
+      myServo.write(i);
+      delay(10);
+    }
+  }
+
+  
+  potValue = analogRead(potPin);
+
+ 
+  angle = map(potValue, 0, 1023, 0, 180);
+
+
+  myServo.write(angle);
+
+
+  Serial.print("Angle: ");
+  Serial.print(angle);
+  Serial.println("°");
+
+  delay(100);
+}
