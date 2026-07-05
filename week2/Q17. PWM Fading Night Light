@@ -1,0 +1,154 @@
+const int ledPin = 9;     
+const int buttonPin = 2;
+
+int mode = 1;
+bool lastButtonState = HIGH;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
+
+  Serial.begin(9600);
+
+  Serial.println("Mode 1: Slow Breathing");
+}
+
+void loop() {
+
+  bool buttonState = digitalRead(buttonPin);
+
+  if (lastButtonState == HIGH && buttonState == LOW) {
+    mode++;
+
+    if (mode > 3)
+      mode = 1;
+
+    switch (mode) {
+      case 1:
+        Serial.println("Mode 1: Slow Breathing");
+        break;
+
+      case 2:
+        Serial.println("Mode 2: Fast Pulse");
+        break;
+
+      case 3:
+        Serial.println("Mode 3: SOS Pattern");
+        break;
+    }
+
+    delay(200); 
+  }
+
+  lastButtonState = buttonState;
+
+
+  switch (mode) {
+
+    case 1:
+      breathing(6);    
+      break;
+
+    case 2:
+      breathing(1);     
+      break;
+
+    case 3:
+      sos();
+      break;
+  }
+}
+
+
+void breathing(int speedDelay) {
+
+
+  for (int brightness = 0; brightness <= 255; brightness++) {
+
+    analogWrite(ledPin, brightness);
+
+    if (checkButton())
+      return;
+
+    delay(speedDelay);
+  }
+
+  for (int brightness = 255; brightness >= 0; brightness--) {
+
+    analogWrite(ledPin, brightness);
+
+    if (checkButton())
+      return;
+
+    delay(speedDelay);
+  }
+}
+
+
+void sos() {
+
+
+  for (int i = 0; i < 3; i++) {
+    blink(200);
+    if (checkButton()) return;
+  }
+
+
+  for (int i = 0; i < 3; i++) {
+    blink(600);
+    if (checkButton()) return;
+  }
+
+
+  for (int i = 0; i < 3; i++) {
+    blink(200);
+    if (checkButton()) return;
+  }
+
+  delay(1000);
+}
+
+
+void blink(int onTime) {
+
+  analogWrite(ledPin, 255);
+  delay(onTime);
+
+  analogWrite(ledPin, 0);
+  delay(200);
+}
+
+bool checkButton() {
+
+  bool state = digitalRead(buttonPin);
+
+  if (lastButtonState == HIGH && state == LOW) {
+
+    mode++;
+
+    if (mode > 3)
+      mode = 1;
+
+    switch (mode) {
+      case 1:
+        Serial.println("Mode 1: Slow Breathing");
+        break;
+
+      case 2:
+        Serial.println("Mode 2: Fast Pulse");
+        break;
+
+      case 3:
+        Serial.println("Mode 3: SOS Pattern");
+        break;
+    }
+
+    delay(200);
+
+    lastButtonState = state;
+    return true;
+  }
+
+  lastButtonState = state;
+  return false;
+}
