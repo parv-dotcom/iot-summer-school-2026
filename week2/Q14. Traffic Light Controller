@@ -1,0 +1,105 @@
+const int red = 13;
+const int yellow = 12;
+const int green = 11;
+const int button_pin = 7;
+
+int state = 0;      // 0 = Red, 1 = Yellow, 2 = Green, 3 = Emergency Red
+unsigned long timer = 0;
+
+void setup()
+{
+  Serial.begin(9600);
+
+  pinMode(red, OUTPUT);
+  pinMode(yellow, OUTPUT);
+  pinMode(green, OUTPUT);
+  pinMode(button_pin, INPUT_PULLUP);
+
+  timer = millis();
+
+  Serial.print("Time: ");
+  Serial.print(millis());
+  Serial.println(" ms | RED");
+}
+
+void loop()
+{
+  if (digitalRead(button_pin) == HIGH && state != 3)
+  {
+    state = 3;
+    timer = millis();
+
+    Serial.print("Time: ");
+    Serial.print(millis());
+    Serial.println(" ms | EMERGENCY RED");
+  }
+
+  if (state == 0)
+  {
+    digitalWrite(red, HIGH);
+    digitalWrite(yellow, LOW);
+    digitalWrite(green, LOW);
+
+    if (millis() - timer >= 5000)
+    {
+      state = 1;
+      timer = millis();
+
+      Serial.print("Time: ");
+      Serial.print(millis());
+      Serial.println(" ms | YELLOW");
+    }
+  }
+
+
+  else if (state == 1)
+  {
+    digitalWrite(red, LOW);
+    digitalWrite(yellow, HIGH);
+    digitalWrite(green, LOW);
+
+    if (millis() - timer >= 2000)
+    {
+      state = 2;
+      timer = millis();
+
+      Serial.print("Time: ");
+      Serial.print(millis());
+      Serial.println(" ms | GREEN");
+    }
+  }
+
+
+  else if (state == 2)
+  {
+    digitalWrite(red, LOW);
+    digitalWrite(yellow, LOW);
+    digitalWrite(green, HIGH);
+
+    if (millis() - timer >= 4000)
+    {
+      state = 0;
+      timer = millis();
+
+      Serial.print("Time: ");
+      Serial.print(millis());
+      Serial.println(" ms | RED");
+    }
+
+  else if (state == 3)
+  {
+    digitalWrite(red, HIGH);
+    digitalWrite(yellow, LOW);
+    digitalWrite(green, LOW);
+
+    if (millis() - timer >= 8000)
+    {
+      state = 0;
+      timer = millis();
+
+      Serial.print("Time: ");
+      Serial.print(millis());
+      Serial.println(" ms | RED");
+    }
+  }
+}
