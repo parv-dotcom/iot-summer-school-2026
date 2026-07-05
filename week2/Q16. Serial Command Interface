@@ -1,0 +1,89 @@
+const int led = LED_BUILTIN;
+
+String command = "";
+int blinkCounter = 0;
+
+void setup() {
+  pinMode(led, OUTPUT);
+  Serial.begin(9600);
+
+  Serial.println("=== LED Command Controller ===");
+  Serial.println("Commands:");
+  Serial.println("LED_ON");
+  Serial.println("LED_OFF");
+  Serial.println("BLINK_X (Example: BLINK_5)");
+  Serial.println("STATUS");
+  Serial.println("RESET");
+}
+
+void loop() {
+
+  if (Serial.available() > 0) {
+
+    command = Serial.readStringUntil('\n');
+    command.trim();   // Remove spaces/newline
+
+
+    if (command == "LED_ON") {
+      digitalWrite(led, HIGH);
+      Serial.println("LED is ON");
+    }
+
+    else if (command == "LED_OFF") {
+      digitalWrite(led, LOW);
+      Serial.println("LED is OFF");
+    }
+
+    else if (command.startsWith("BLINK_")) {
+
+      char num = command.charAt(6);
+
+      if (num >= '1' && num <= '9' && command.length() == 7) {
+
+        int times = num - '0';
+
+        for (int i = 0; i < times; i++) {
+          digitalWrite(led, HIGH);
+          delay(500);
+
+          digitalWrite(led, LOW);
+          delay(500);
+
+          blinkCounter++;
+        }
+
+        Serial.print("Blink Count = ");
+        Serial.println(blinkCounter);
+      }
+      else {
+        Serial.println("ERROR: Invalid Blink Value");
+      }
+    }
+
+
+    else if (command == "STATUS") {
+
+      Serial.print("LED State: ");
+
+      if (digitalRead(led) == HIGH)
+        Serial.println("ON");
+      else
+        Serial.println("OFF");
+
+      Serial.print("Total Blinks: ");
+      Serial.println(blinkCounter);
+    }
+
+
+    else if (command == "RESET") {
+
+      blinkCounter = 0;
+      Serial.println("Blink Counter Reset");
+    }
+
+
+    else {
+      Serial.println("ERROR: Unknown command");
+    }
+  }
+}
