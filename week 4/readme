@@ -1,0 +1,84 @@
+1. Upload the Code
+Disconnect the HC-05 module from the Arduino before uploading (or remove TX/RX wires).
+Upload the sketch.
+After uploading, reconnect the HC-05.
+2. Wiring
+HC-05	Arduino Uno
+VCC	5V
+GND	GND
+TXD	RX (D0)
+RXD	TX (D1) (preferably through a voltage divider)
+
+LED connections:
+
+Red LED → D2
+Green LED → D3
+Blue LED → D4
+Each LED should have a 220Ω resistor.
+3. Pair the Phone
+Turn on the Arduino.
+HC-05 LED should blink rapidly.
+On your Android phone:
+Open Settings → Bluetooth
+Turn Bluetooth ON.
+Search for devices.
+Select HC-05 (or HC-06 if that's the module name).
+Enter the pairing PIN:
+1234
+If that doesn't work, try 0000.
+After pairing, the HC-05 LED will still blink until an app connects.
+4. Install a Bluetooth Terminal App
+
+Examples:
+
+Serial Bluetooth Terminal
+Bluetooth Terminal HC-05
+5. Connect to HC-05
+Open the Bluetooth Terminal app.
+Tap Connect.
+Select HC-05.
+Once connected, the HC-05 LED will blink slowly (about once every 2 seconds), indicating a successful connection.
+6. Send These Commands
+
+Send uppercase letters:
+
+Send	Result
+R	Red LED ON
+G	Green LED ON
+B	Blue LED ON
+X	All LEDs OFF
+F	Flash all LEDs 5 times
+
+Any other character will display:
+
+Invalid Command!
+7. Expected Serial Monitor Output
+
+When the Arduino starts:
+
+===== Bluetooth LED Controller =====
+Commands:
+R - Red LED ON
+G - Green LED ON
+B - Blue LED ON
+X - All LEDs OFF
+F - Flash LEDs 5 Times
+-----------------------------------
+
+After sending commands:
+
+R
+Red LED ON
+
+G
+Green LED ON
+
+B
+Blue LED ON
+
+F
+Flashing LEDs...
+Done
+
+X
+All LEDs OFF
