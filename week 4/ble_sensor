@@ -1,0 +1,53 @@
+#include <DHT.h>
+
+#define DHTPIN 4
+#define DHTTYPE DHT11
+
+DHT dht(DHTPIN, DHTTYPE);
+
+unsigned long lastUpdate = 0;
+unsigned long timestamp = 0;
+
+void setup() {
+  Serial.begin(115200);
+  dht.begin();
+
+  Serial.println("====================================");
+  Serial.println("ESP32 Sensor Dashboard (Wokwi Demo)");
+  Serial.println("BLE Simulation");
+  Serial.println("====================================");
+}
+
+void loop() {
+
+  if (millis() - lastUpdate >= 3000) {
+
+    lastUpdate = millis();
+    timestamp++;
+
+    float temp = dht.readTemperature();
+    float hum = dht.readHumidity();
+
+    if (isnan(temp) || isnan(hum)) {
+      Serial.println("Failed to read DHT11!");
+      return;
+    }
+
+    Serial.println("----------- BLE Packet -----------");
+
+    Serial.print("Temperature : ");
+    Serial.print(temp);
+    Serial.println(" °C");
+
+    Serial.print("Humidity    : ");
+    Serial.print(hum);
+    Serial.println(" %");
+
+    Serial.print("Timestamp   : ");
+    Serial.print(timestamp * 3);
+    Serial.println(" sec");
+
+    Serial.println("----------------------------------");
+    Serial.println();
+  }
+}
