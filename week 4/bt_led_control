@@ -1,0 +1,95 @@
+#define RED_LED    2
+#define GREEN_LED  3
+#define BLUE_LED   4
+
+char command;
+
+void setup() {
+
+  pinMode(RED_LED, OUTPUT);
+  pinMode(GREEN_LED, OUTPUT);
+  pinMode(BLUE_LED, OUTPUT);
+
+  Serial.begin(9600);
+
+  Serial.println("===== Bluetooth LED Controller =====");
+  Serial.println("Commands:");
+  Serial.println("R - Red LED ON");
+  Serial.println("G - Green LED ON");
+  Serial.println("B - Blue LED ON");
+  Serial.println("X - All LEDs OFF");
+  Serial.println("F - Flash LEDs 5 Times");
+  Serial.println("-----------------------------------");
+}
+
+void loop() {
+
+  if (Serial.available()) {
+
+    command = toupper(Serial.read());
+
+    switch (command) {
+
+      case 'R':
+        digitalWrite(RED_LED, HIGH);
+        digitalWrite(GREEN_LED, LOW);
+        digitalWrite(BLUE_LED, LOW);
+
+        Serial.println("Red LED ON");
+        break;
+
+      case 'G':
+        digitalWrite(RED_LED, LOW);
+        digitalWrite(GREEN_LED, HIGH);
+        digitalWrite(BLUE_LED, LOW);
+
+        Serial.println("Green LED ON");
+        break;
+
+      case 'B':
+        digitalWrite(RED_LED, LOW);
+        digitalWrite(GREEN_LED, LOW);
+        digitalWrite(BLUE_LED, HIGH);
+
+        Serial.println("Blue LED ON");
+        break;
+
+      case 'X':
+        digitalWrite(RED_LED, LOW);
+        digitalWrite(GREEN_LED, LOW);
+        digitalWrite(BLUE_LED, LOW);
+
+        Serial.println("All LEDs OFF");
+        break;
+
+      case 'F':
+
+        Serial.println("Flashing LEDs...");
+
+        for (int i = 0; i < 5; i++) {
+
+          digitalWrite(RED_LED, HIGH);
+          digitalWrite(GREEN_LED, HIGH);
+          digitalWrite(BLUE_LED, HIGH);
+
+          delay(300);
+
+          digitalWrite(RED_LED, LOW);
+          digitalWrite(GREEN_LED, LOW);
+          digitalWrite(BLUE_LED, LOW);
+
+          delay(300);
+        }
+
+        Serial.println("Done");
+        break;
+
+      default:
+
+        if(command!='\n' && command!='\r'){
+          Serial.println("Invalid Command!");
+        }
+
+    }
+  }
+}
